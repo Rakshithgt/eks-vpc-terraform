@@ -1,19 +1,36 @@
 provider "aws" {
-  region  = "us-west-2"
+  region = "us-west-2"
 }
 
-resource "aws_s3_bucket" "rakshith" {
-  bucket = "demo-terraform-eks-state-bucket"
-  
+resource "aws_s3_bucket" "terraform_state" {
+  bucket = "rakshithgt16072025-terraform-eks-state-s3-bucket"
+
   lifecycle {
-    prevent_destroy =  false
+    prevent_destroy = false
   }
 }
 
-resource "aws_dynamodb_table" "basic-table" {
-  name = "terraform-eks-state-lock"
+resource "aws_s3_bucket_versioning" "terraform_state" {
+  bucket = aws_s3_bucket.terraform_state.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state" {
+  bucket = aws_s3_bucket.terraform_state.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_dynamodb_table" "terraform_locks" {
+  name         = "akshithgt16072025-eks-state-locks"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key =  "LockID"
+  hash_key     = "LockID"
 
   attribute {
     name = "LockID"

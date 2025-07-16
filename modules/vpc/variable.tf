@@ -1,6 +1,6 @@
 variable "vpc_cidr" {
-    description = "CIDR block for the VPC"
-    type = "string"
+  description = "CIDR block for VPC"
+  type        = string
 }
 
 variable "availability_zones" {
